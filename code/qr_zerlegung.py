@@ -1,14 +1,7 @@
-# ----------------------------------------------------------------------------
-# HM1 SERIE 8 AUFGABE 2 GERUEST / adel
-# ---------------------------------------------------------------------------
-
 import numpy as np
 
-# TEILAUFGABE a)
 
-# Ersetzen Sie alle mit ??? gekennzeichneten Stellen durch passenden Code.
-
-def Serie8_Aufg2(A):
+def qr_householder(A):
     # Berechnet QR-Zerlegung der nxn-Matrix A mit Householder-Verfahren
 
     A = np.copy(A)
@@ -37,11 +30,6 @@ def Serie8_Aufg2(A):
 
     return Q, R
 
-# TEILAUFGABE b)
-
-# Kontrollieren Sie Ihre Ergebnisse aus Aufgabe 1 der Serie 8
-# mit der Funktion aus a) und weiterem Code
-
 A = np.array(
         [
             [1, -2, 3],
@@ -49,5 +37,5 @@ A = np.array(
             [2, -1, 3]
         ]
 )
-Q, R = Serie8_Aufg2(A)
+Q, R = qr_householder(A)
 print(f"QR-Zerlegung von A:\nQ =\n{Q}\nR =\n{R}\n")

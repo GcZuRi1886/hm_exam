@@ -14,3 +14,8 @@
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
