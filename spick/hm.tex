@@ -22,101 +22,110 @@
                                 {-1explus -.5ex minus -.2ex}%
                                 {0.5ex plus .2ex}%
                                 {\normalfont\normalsize\bfseries}}
+
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
 \makeatother
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt plus 0.5ex}
 
 \begin{document}
-\raggedright
-\footnotesize
-\begin{multicols}{3}
-
-\setlength{\premulticols}{1pt}
-\setlength{\postmulticols}{1pt}
-\setlength{\multicolsep}{1pt}
-\setlength{\columnsep}{2pt}
 
 \begin{center}
-     \Large{\underline{Numerical Methods Cheat Sheet}}
+	\Large{Höhere Mathematik 1}
 \end{center}
 
-\section{Root Finding}
+\raggedright
+\footnotesize
+\begin{multicols*}{3}
+	\setlength{\premulticols}{1pt}
+	\setlength{\postmulticols}{1pt}
+	\setlength{\multicolsep}{1pt}
+	\setlength{\columnsep}{2pt}
 
-\subsection{Bisection Method}
+	\section*{Rechnerarithmetik}
+	\subsection*{Gleitkommazahlen / Maschinenzahlen}
+	\begin{itemize}
+		\item Darstellung: \(M = \{x \in \mathbb{R} | x = \pm 0.m_{1}m_{2}m_{3} \ldots m_n \cdot B^{e_{l-1} \ldots e_{1}e_{0} - bias}\} \cup \{0\} \)
+		\item Basis \(B\), Mantissenlänge \(n\), Exponentenbereich \([e_{\min}, e_{\max}]\)
+		\item Normalisierte Zahl: \(m_1 \neq 0\)
+		\item Bias: \(bias = B^{l-1} - 1\) für \(l\)-stellige Exponentendarstellung
+	\end{itemize}
 
+	\section*{Fehleranalyse}
+	\begin{itemize}
+		\item Gerundete Zahl: \(\tilde{x} = rd(x)\)
+		\item Absoluter Rundungsfehler: \(|\tilde{x} - x| \leq \frac{1}{2} B^{e - n + 1}\)
+		\item Relative Rundungsfehler: \(\left|\frac{\tilde{x} - x}{x}\right| \leq \text{eps}\)
+		\item Maschinengenauigkeit: \(\text{eps} = \max_{x \in M} \left|\frac{rd(x) - x}{x}\right| = \frac{1}{2}B^{1-n}\)
+	\end{itemize}
+	\subsection*{Fehlerfortpflanzung bei Funktionen}
+	\begin{itemize}
+		\item Absoluter Fehler: \(|f(\tilde{x}) - f(x)| \approx |f'(x)| \cdot |\tilde{x} - x|\)
+		\item Relativer Fehler: \(\left|\frac{f(\tilde{x}) - f(x)}{f(x)}\right| \approx \left|\frac{x \cdot f'(x)}{f(x)}\right| \cdot \left|\frac{\tilde{x} - x}{x}\right|\)
+		\item Kondition (Je kleiner desto besser): \(K = \left|\frac{x \cdot f'(x)}{f(x)}\right|\)
+	\end{itemize}
 
-\subsection{Newton's Method}
+	\section*{Nullstellenprobleme}
+  
+  \subsection*{Fixpunktiteration}
+  \begin{itemize}
+    \item Fixpunktgleichung: \(F(x) = x\)
+    \item Fixpunkte $(\overline{x})$ sind Nullstellen von \(f(x) = F(x) - x\)
+    \item Iterationsvorschrift: \(x_{n+1} = F(x_n)\)
+    \item Konvergenz: \(|F'(\overline{x})| < 1\) $\rightarrow$ anziehender Fixpunkt
+    \item Divergenz: \(|F'(\overline{x})| > 1\) $\rightarrow$ abstoßender Fixpunkt
+  \end{itemize}
+  \subsubsection*{Banach'scher Fixpunktsatz}
+  \begin{itemize}
+    \item Sei \(F: [a,b] \rightarrow [a,b]\) und es existiert eine Konstante \(0 < \alpha < 1\) mit 
+      \begin{equation*}
+        |F(x) - F(y)| \leq \alpha | x - y |  \quad \forall x,y \in [a,b]
+      \end{equation*}
+    \item Dann besitzt \(F\) genau einen Fixpunkt \(\overline{x} \in [a,b]\) und die Iteration \(x_{n+1} = F(x_n)\) konvergiert für jeden Startwert \(x_0 \in [a,b]\) gegen \(\overline{x}\). (Lipschitz-Stetigkeit mit Lipschitz-Konstante \(\alpha\))
+    \item a-priori-Fehlerabschätzung:
+      \begin{equation*}
+        |x_n - \overline{x}| \leq \frac{\alpha^n}{1 - \alpha} |x_1 - x_0|
+      \end{equation*}
+    \item a-posteriori-Fehlerabschätzung:
+      \begin{equation*}
+        |x_n - \overline{x}| \leq \frac{\alpha}{1 - \alpha} |x_n - x_{n-1}|
+      \end{equation*}
+    \item Umformung: $\left | \frac{F(x) - F(y)}{x - y}{x - y} \right | \leq \alpha$ 
+  \end{itemize}
+  
+  \columnbreak
 
+  \subsection*{Newton-Verfahren}
+  \begin{equation*}
+    x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}
+  \end{equation*}
+  Für den Startwert $x_0$ muss gelten, dass $f(x_0) \ne 0$ und $f'(x_0) \ne 0$.
+  Ein geeigneter Startwert kann durch die Nullstellenbestimmung der Ableitungsfunktion gefunden werden.
+  \subsubsection*{Vereinfachte Newton-Verfahren}
+  \begin{itemize}
+    \item Fixierter Ableitungswert: \(x_{n+1} = x_n - \frac{f(x_n)}{f'(x_0)}\)
+    \item Sekantenverfahren: \(x_{n+1} = x_n - f(x_n) \cdot \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}\)
+  \end{itemize}
 
-\subsection{Secant Method}
-
-
-\subsection{Fixed Point Iteration}
-
-
-\section{Interpolation}
-
-\subsection{Lagrange Interpolation}
-
-
-\subsection{Newton Divided Differences}
-
-
-\subsection{Error Bound}
-
-
-\section{Numerical Integration}
-
-\subsection{Trapezoidal Rule}
-
-
-\subsection{Simpson's Rule}
-
-
-\subsection{Gaussian Quadrature}
-
-
-\section{Linear Systems}
-
-\subsection{Gaussian Elimination}
-
-
-\subsection{LU Decomposition}
-
-
-\subsection{Iterative Methods}
-
-
-\subsection{Condition Number}
-
-
-\section{Ordinary Differential Equations}
-
-\subsection{Euler's Method}
-
-
-\subsection{Runge-Kutta (RK4)}
-
-
-\subsection{Stability}
-
-
-\section{Error Analysis}
-
-\subsection{Types of Error}
-
-
-\subsection{Order of Convergence}
-
-
-\section{Useful Formulas}
-
-\subsection{Taylor Series}
-
-
-\subsection{Finite Differences}
-
-
-\end{multicols}
-\end{document} 
+  \subsection*{Fehlerabschätzung}
+  \subsubsection*{Konvergenzordnung}
+  \begin{itemize}
+    \item Sei \((x_n)\) eine konvergierende Folge gegen \(\overline{x}\)
+    \item Die Folge hat die Konvergenzordnung \(q\), wenn eine Konstante \(c > 0\) existiert, so dass
+      \begin{equation*}
+        | x_{n+1} - \overline{x} | \leq c \cdot | x_n - \overline{x} |^q
+      \end{equation*}
+    \item \(q = 1\) lineare Konvergenz, \(q = 2\) quadratische Konvergenz
+    
+  \end{itemize}
+  \subsubsection*{Nullstellensatz von Bolzano}
+  \begin{itemize}
+    \item Sei \(f: [a,b] \rightarrow \mathbb{R}\) stetig mit \(f(a) \cdot f(b) < 0\) oder \(f(a) \geq 0 \geq f(b)\) 
+    \item Dann existiert mindestens ein \(\overline{x} \in (a,b)\) mit \(f(\overline{x}) = 0\)
+  \end{itemize}
+\end{multicols*}
+\end{document}
