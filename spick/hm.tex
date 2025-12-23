@@ -316,7 +316,7 @@
     \item Normalform / kartesische Form: \(z = x + iy\), \(x,y \in \mathbb{R}\)
     \item Polardarstellung / Trigonometrische Form: \(z = r (\cos \varphi + i \sin \varphi)\)
     \item Eulersche Darstellung: \(z = r e^{i \varphi}\)
-    \item Betrag: \(|z| = r = \sqrt{x^2 + y^2}\)
+    \item Betrag: \(|z| = r = \sqrt{x^2 + y^2} = \sqrt{z \cdot z^*}\)
     \item Argument: \(\varphi = \arg(z) = \tan^{-1}(\frac{y}{x}) = \cos^{-1}(\frac{x}{r}) = \sin^{-1}(\frac{y}{r})\)
   \end{itemize}
 
@@ -351,6 +351,54 @@
       \begin{equation*}
         k = 0, 1, \ldots, n-1
       \end{equation*}
+
   \end{itemize}
+  
+  \columnbreak
+
+  \section*{Eigenwerte und Eigenvektoren}
+  \subsection*{Definition}
+  Sei \(A \in \mathbb{R}^{n \times n}\). Ein Vektor \(v \in \mathbb{R}^n, v \neq 0\) heißt Eigenvektor von \(A\) zum Eigenwert \(\lambda \in \mathbb{R}\), wenn gilt:
+  \begin{equation*}
+    A v = \lambda v
+  \end{equation*}
+  \subsection*{Bestimmung}
+  \begin{itemize}
+    \item $\lambda$ ist Eigenwert von A \(\Leftrightarrow \det(A - \lambda I_n) = 0\)
+    \item Charakteristisches Polynom: \(P_A(\lambda) = \det(A - \lambda I_n)\)
+    \item Eigenwerte: Nullstellen des charakteristischen Polynoms
+    \item Eigenvektoren: Lösen von \((A - \lambda I_n) v = 0\) für jeden Eigenwert \(\lambda\)
+    \item $\lambda^{-1}$ ist Eigenwert von \(A^{-1}\) mit demselben Eigenvektor \(v\), falls \(A\) invertierbar ist
+    \item Das Spektrum von \(A\) ist die Menge aller Eigenwerte: \(\sigma(A) = \{\lambda_1, \lambda_2, \ldots, \lambda_k\}\)
+  \end{itemize}
+  \subsection*{Eigenräume}
+  \begin{itemize}
+    \item Eigenraum zu \(\lambda\): \(E_{\lambda} = \{v \in \mathbb{R}^n | A v = \lambda v\}\)
+    \item Dimension des Eigenraums: geometrische Vielfachheit
+    \item Vielfachheit eines Eigenwerts als Nullstelle des charakteristischen Polynoms: algebraische Vielfachheit
+    \item \(1 \leq \text{geometrische Vielfachheit} \leq \text{algebraische Vielfachheit}\)
+  \end{itemize}
+  \subsection*{Diagonalisierbarkeit / Ähnlichkeit}
+  \begin{itemize}
+    \item Es seien \(A, B \in \mathbb{R}^{n \times n}\). \(A\) und \(B\) heißen ähnlich, wenn eine invertierbare Matrix \(S \in \mathbb{R}^{n \times n}\) existiert, so dass gilt:
+      \begin{equation*}
+        B = S^{-1} A S
+      \end{equation*}
+    \item \(A\) ist diagonalisierbar, wenn \(S = D\) eine Diagonalmatrix ist
+    \item \(D\) enthält die Eigenwerte von \(A\) auf der Diagonale
+    \item \(S\) enthält die zugehörigen Eigenvektoren als Spalten
+    \item Wenn $A, B$ ähnlich sind, gilt:
+      \begin{itemize}
+        \item A und B haben dieselben Eigenwerte mit derselben algebraischen Vielfachheit
+        \item Die Eigenvektoren von A und B hängen über die Matrix S zusammen
+      \end{itemize}
+  \end{itemize}
+  \subsection*{von-Mises-Iteration}
+  \begin{itemize}
+    \item Iterationsvorschrift: \(v^{(k+1)} = \frac{A v^{(k)}}{\|A v^{(k)}\|}\)
+    \item Konvergenz gegen den Eigenvektor zum betragsmäßig größten Eigenwert
+    \item Approximierter Eigenwert: \(\lambda^{(k)} = \frac{(v^{(k)})^T A v^{(k)}}{(v^{(k)})^T v^{(k)}}\)
+  \end{itemize}
+  \pagebreak
 \end{multicols*}
 \end{document}
