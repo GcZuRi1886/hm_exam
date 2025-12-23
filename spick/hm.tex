@@ -127,5 +127,230 @@
     \item Sei \(f: [a,b] \rightarrow \mathbb{R}\) stetig mit \(f(a) \cdot f(b) < 0\) oder \(f(a) \geq 0 \geq f(b)\) 
     \item Dann existiert mindestens ein \(\overline{x} \in (a,b)\) mit \(f(\overline{x}) = 0\)
   \end{itemize}
+  
+  \section*{Lineare Gleichungssysteme}
+  \subsection*{LR-Zerlegung}
+  \begin{itemize}
+    \item Zerlegung einer Matrix \(A\) in das Produkt \(A = L \cdot R\)
+    \item \(L\): untere Dreiecksmatrix mit Einsen auf der Diagonale
+    \item \(R\): obere Dreiecksmatrix
+    \item Lösen von \(A \cdot x = b\) durch Lösen von \(L \cdot y = b\) und \(R \cdot x = y\)
+    \item Voraussetzung: Keine Null-Pivotelemente während der Zerlegung / kein Zeilentausch notwendig (sonst \(P \cdot A = L \cdot R\))
+  \end{itemize}
+  \subsubsection*{Beispiel}
+  \begin{equation*}
+    A = \begin{pmatrix}
+      -1 & 1 & 1 \\
+      1 & -3 & -2 \\
+      5 & 1 & 4
+    \end{pmatrix} = \underbrace{\begin{pmatrix}
+      1 & 0 & 0 \\
+      -1 & 1 & 0 \\
+      -5 & -3 & 1
+    \end{pmatrix}}_{L} \cdot \underbrace{\begin{pmatrix}
+      -1 & 1 & 1 \\
+      0 & -2 & -1 \\
+      0 & 0 & 6
+    \end{pmatrix}}_{R}
+  \end{equation*}
+  \subsubsection*{Permutationsmatrix}
+  \begin{itemize}
+    \item Vertauscht Zeilen oder Spalten einer Matrix
+    \item \(P \cdot A\): Vertauschen der Zeilen von \(A\)
+    \item \(A \cdot P\): Vertauschen der Spalten von \(A\)
+    \item \( P_1, P_2\) sind Permutationsmatrizen $\Rightarrow$ \(P = P_1 \cdot P_2\) ist auch eine Permutationsmatrix
+    \item \(P^{-1} = P^T\)
+  \end{itemize}
+
+  \columnbreak
+
+  \subsection*{QR-Zerlegung}
+  \begin{itemize}
+    \item Zerlegung einer Matrix \(A\) in das Produkt \(A = Q \cdot R\)
+    \item \(Q\): orthogonale Matrix (\(Q^T \cdot Q = I\))
+    \item \(R\): obere Dreiecksmatrix
+  \end{itemize}
+  \subsubsection*{Householder-Matrizen}
+  \begin{itemize}
+    \item \(H\) ist orthogonal und symmetrisch (\(H^T = H\))
+    \item \(H\) spiegelt an der Hyperebene orthogonal zu \(u\)
+    \item \( H = H^T = H^{-1} \Rightarrow H \cdot H = I_n \)
+    \item Wenn \(u\) ein normierter Vektor ist, dann gilt:
+      \begin{equation*}
+        H = I_n - 2 u u^T
+      \end{equation*}
+  \end{itemize}
+  \subsubsection*{QR-Zerlegung mit Householder-Matrizen}
+  \begin{equation*}
+    A = \begin{pmatrix}
+      1 & 2 & -1 \\
+      4 & -2 & 6 \\
+      3 & 1 & 0
+    \end{pmatrix}, b = \begin{pmatrix}
+      9 \\
+      -4 \\
+      9
+    \end{pmatrix}
+  \end{equation*}
+  \begin{enumerate}
+    \item \(v_1 = a_1 + sign(a_{11}) \cdot |a_1| \cdot e_1\)
+    \item \(u_1 = \frac{v_1}{||v_1||_2}\)
+    \item \(H_1 = I - 2 u_1 u_1^T\)
+    \item \(A^{(1)} = H_1 \cdot A\), \(b^{(1)} = H_1 \cdot b\)
+  \end{enumerate}
+  \begin{equation*}
+    A^{(1)} = \begin{pmatrix}
+      -5.0990 & 0.5883 & -4.5107 \\
+      0 & -2.9258 & 3.6976 \\
+      0 & 0.3056 & -1.7268
+    \end{pmatrix}
+  \end{equation*}
+  Rekursiv mit \(A^{(1)}\) (2$\times$2-Matrix) durchführen bis \(A^{(n-1)}\) obere Dreiecksmatrix ist.
+
+  \subsection*{Vektor- und Matrixnormen}
+  \begin{itemize}
+    \item Vektornormen:
+      \begin{equation*}
+        \text{1-Norm, Summennorm: } \|x\|_1 = \sum_{i=1}^{n} |x_i|
+      \end{equation*}
+      \begin{equation*}
+        \text{2-Norm, euklidische Norm: } \|x\|_2 = \sqrt{\sum_{i=1}^{n} |x_i|^2}
+      \end{equation*}
+      \begin{equation*}
+        \text{Unendlich-Norm, Maximumnorm: } \|x\|_{\infty} = \max_{1 \leq i \leq n} |x_i|
+      \end{equation*}
+   \item Matrixnormen (n$\times$m-Matrizen):
+      \begin{equation*}
+        \text{1-Norm, Spaltensummennorm: } \|A\|_1 = \max_{1 \leq j \leq m} \sum_{i=1}^{n} |a_{ij}|
+      \end{equation*}
+      \begin{equation*}
+        \text{2-Norm, Spektralnorm: } \|A\|_2 = \sqrt{\rho(A^T A)}
+      \end{equation*}
+      \begin{equation*}
+        \text{Unendlich-Norm, Zeilensummennorm: } \|A\|_{\infty} = \max_{1 \leq i \leq n} \sum_{j=1}^{m} |a_{ij}|
+      \end{equation*}
+  \end{itemize}
+  \subsubsection*{Spektralradius}
+  \begin{itemize}
+    \item \(\rho(A) = \max \{ |\lambda| | \lambda \text{ ist Eigenwert von } A \}\)
+    \item Für jede Matrixnorm gilt: \(\rho(A) \leq \|A\|\)
+  \end{itemize}
+  
+  \pagebreak
+
+  \subsection*{Fehlerrechnung Vektoren}
+  \begin{itemize}
+    \item $|| . ||$: gewählte Matrixnorm
+    \item Konditionszahl: \(cond(A) = \|A\| \cdot \|A^{-1}\|\)
+    \item Abschätzung des relativen Lösungsfehlers:
+      \begin{equation*}
+        \frac{\| \tilde{x} - x \|}{\| x \|} \leq cond(A) \cdot \frac{\| \tilde{b} - b \|}{\| b \|} \text{, falls } || b || \neq 0
+      \end{equation*}
+    \item Je größer \(cond(A)\), desto schlechter ist das LGS konditioniert
+  \end{itemize}
+  \subsection*{Fehlerrechnung Matrizen}
+  \begin{itemize}
+    \item Gegeben: \( \tilde{A} = A + E \) mit \(E\) als Störmatrix ($E = A - \tilde{A}$)
+    \item Abschätzung des relativen Lösungsfehlers:
+      \begin{equation*}
+        \frac{\| \tilde{x} - x \|}{\| x \|} \leq \frac{cond(A)}{1 - cond(A) \cdot \frac{\| E \|}{\| A \|}} \cdot \left ( \frac{\| E \|}{\| A \|} + \frac{\|b - \tilde{b}\|}{\|b\|} \right )
+      \end{equation*}
+    \item Gilt nur, wenn \(cond(A) \cdot \frac{\| E \|}{\| A \|} < 1\)
+  \end{itemize}
+  \subsection*{Aufwandsabschätzung}
+  \begin{itemize}
+    \item LR-Zerlegung: \(\frac{2}{3} n^3\) Operationen
+    \item Vorwärts- und Rückwärtseinsetzen: \(2 n^2\) Operationen
+    \item QR-Zerlegung mit Householder: \(2 n^3\) Operationen
+    \item Vorwärts- und Rückwärtseinsetzen: \(2 n^2\) Operationen
+    \item Allgemein:
+      \begin{equation*}
+        \sum_{i=1}^{n}i = \frac{n(n+1)}{2} \approx \frac{n^2}{2}
+      \end{equation*}
+      und
+      \begin{equation*}
+        \sum_{i=1}^{n}i^2 = \frac{1}{6} n + \frac{1}{2} n^2 + \frac{1}{3} n^3 \approx \frac{1}{3} n^3
+      \end{equation*}
+  \end{itemize}
+  \section*{Iterative Verfahren für LGS}
+  \subsection*{Jacobi-Verfahren}
+  \begin{itemize}
+    \item Zerlegung: 
+      D ist die Diagonalmatrix von A, L die untere Dreiecksmatrix und R die obere Dreiecksmatrix
+      \begin{align*}
+        Ax &= b \\
+        (L + D + R)x &= b \\
+        Dx &= - (L + R)x + b \\
+        x &= D^{-1} (L + R)x + D^{-1} b
+      \end{align*}
+    \item Iterationsvorschrift: \(x^{(k+1)} = D^{-1} (L + R) x^{(k)} + D^{-1} b\)
+    \item Iterationsmatrix: \(B_J = D^{-1} (L + R)\)
+  \end{itemize}
+  \subsection*{Gauß-Seidel-Verfahren}
+  \begin{itemize}
+    \item Iterationsvorschrift: \(x^{(k+1)} = (D - L)^{-1} R x^{(k)} + (D - L)^{-1} b\)
+    \item Iterationsmatrix: \(B_{GS} = (D - L)^{-1} R\)
+  \end{itemize}
+  \subsection*{Konvergenz und Abschätzung}
+  \begin{itemize}
+    \item Beide Verfahren konvergieren, wenn \(\|B\| < 1\)
+    \item Symmetrisch positiv definite Matrizen (nur Gauß-Seidel)
+    \item Siehe Fixpunktiteration (\(\alpha = \|B\|\))
+  \end{itemize}
+
+  \columnbreak
+  
+  \subsubsection*{Diagonaldominanz}
+  \begin{itemize}
+    \item Eine Matrix ist diagonaldominant wenn eines der folgenden Kriterien erfüllt ist:
+      \begin{itemize}
+        \item \(\forall i = 1, \ldots,n: |a_{ii}| > \sum_{j = 1, j \neq i} |a_{i,j}|\) (Zeilensummenkriterium)
+        \item \(\forall j = 1, \ldots,n: |a_{jj}| > \sum_{i = 1, i \neq j} |a_{i,j}|\) (Spaltensummenkriterium)
+      \end{itemize}
+    \item Beide Verfahren konvergieren für diagonaldominante Matrizen
+  \end{itemize}
+
+  \section*{Komplexe Zahlen}
+  \subsection*{Darstellung}
+  \begin{itemize}
+    \item Normalform / kartesische Form: \(z = x + iy\), \(x,y \in \mathbb{R}\)
+    \item Polardarstellung / Trigonometrische Form: \(z = r (\cos \varphi + i \sin \varphi)\)
+    \item Eulersche Darstellung: \(z = r e^{i \varphi}\)
+    \item Betrag: \(|z| = r = \sqrt{x^2 + y^2}\)
+    \item Argument: \(\varphi = \arg(z) = \tan^{-1}(\frac{y}{x}) = \cos^{-1}(\frac{x}{r}) = \sin^{-1}(\frac{y}{r})\)
+  \end{itemize}
+
+  \subsection*{Rechenregeln}
+  \begin{itemize}
+    \item Addition: \(z_1 + z_2 = (x_1 + x_2) + i(y_1 + y_2)\)
+    \item Multiplikation: \(z_1 \cdot z_2 = (x_1 + i y_1)(x_2 + i y_2)\)
+    \item Multiplikation in Polardarstellung:
+      \begin{equation*}
+        z_1 \cdot z_2 = r_1 r_2 [\cos(\varphi_1 + \varphi_2) + i \sin(\varphi_1 + \varphi_2)]
+      \end{equation*}
+    \item Division: 
+      \begin{equation*}
+        \frac{z_1}{z_2} = \frac{z_1 \cdot z_2^*}{z_2 \cdot z_2^*}, \quad z_2 \neq 0
+      \end{equation*}
+    \item Division in Polardarstellung:
+      \begin{equation*}
+        \frac{z_1}{z_2} = \frac{r_1}{r_2} [\cos(\varphi_1 - \varphi_2) + i \sin(\varphi_1 - \varphi_2)], \quad z_2 \neq 0
+      \end{equation*}
+    \item Potenzieren in der Polardarstellung:
+      \begin{equation*}
+        z^n = r^n [\cos(n \varphi) + i \sin(n \varphi)] = r^n e^{i n \varphi}
+      \end{equation*}
+  \end{itemize}
+  \subsection*{Wurzeln}
+  \begin{itemize}
+    \item \(z = r (\cos \varphi + i \sin \varphi)\) = \(r e^{i \varphi}\)
+    \item \(n\)-te Wurzel:
+      \begin{equation*}
+        z_k = r^{1/n} \left[ \cos\left( \frac{\varphi + 2k\pi}{n} \right) + i \sin\left( \frac{\varphi + 2k\pi}{n} \right) \right] = r e^{i \frac{\varphi + 2k\pi}{n}} 
+      \end{equation*}
+      \begin{equation*}
+        k = 0, 1, \ldots, n-1
+      \end{equation*}
+  \end{itemize}
 \end{multicols*}
 \end{document}
