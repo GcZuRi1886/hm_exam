@@ -32,8 +32,33 @@ def banach(x):
         print(f"Successful with alpha: {alpha}")
     
 
+# c
+def a_posteriori(alpha, x_n, x_n_1):
+    return alpha / (1 - alpha) * np.abs(x_n - x_n_1)
+
+def fixpoint_iteration(f, x_0, tolerance, alpha):
+    error = np.inf
+    fixpoint = 0
+    x = x_0
+    iteration_count = 0
+    while error > tolerance:
+        fixpoint = f(x)
+        error = a_posteriori(alpha, fixpoint, x)
+        x = fixpoint
+        iteration_count += 1
+
+    return iteration_count, fixpoint
+
+# d)
+def g(x):
+    return (x-1)/(x-2) - np.cos(x + np.pi/4)
+
+    
+
 if __name__ == "__main__":
     x = np.linspace(0, np.pi)
     # plot(x)
-    banach(x)
+    # banach(x)
+    # print(f"A posteriori: {a_posteriori(0.9, 1.3441, 1.3376)}")
+    print(f"fixpoint_iteration: {fixpoint_iteration(f, 3, 0.01, 0.9)}")
 
