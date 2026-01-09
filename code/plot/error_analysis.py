@@ -1,4 +1,4 @@
-import FabianOdermatt_S09_Aufg2 as aufg2
+from matrix.error_analysis import error_analysis
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
@@ -14,7 +14,7 @@ for i in range(1, 1000):
     A_err = A + np.random.rand(100, 100) * 10**-5
     b_err = b + np.random.rand(100, 1) * 10**-5
 
-    result = aufg2.error_analysis(A, b, A_err, b_err)
+    result = error_analysis(A, b, A_err, b_err)
     if result is not None:
         x, x_err, dx_max, dx_obs = result
         dx_ratio = dx_max / dx_obs
