@@ -1,6 +1,6 @@
 import numpy as np
 
-def max_relative_error(A, b, A_err, b_err, A_cond):
+def max_relative_error_matrix(A, b, A_err, b_err, A_cond):
     A_norm = np.linalg.norm(A, np.inf)
     A_err_norm = np.linalg.norm(A - A_err, np.inf)
     b_norm = np.linalg.norm(b, np.inf)
@@ -10,7 +10,13 @@ def max_relative_error(A, b, A_err, b_err, A_cond):
     right_mult = (A_err_norm / A_norm) + (b_err_norm / b_norm)
 
     return left_mult * right_mult
-    
+   
+def max_relative_error_vector(b, b_err, A_cond):
+    b_norm = np.linalg.norm(b, np.inf)
+    b_err_norm = np.linalg.norm(b- b_err, np.inf)
+
+    return A_cond * (b_err_norm / b_norm)
+
 def obs_relative_error(x, x_err):
     x_norm = np.linalg.norm(x, np.inf)
     x_err_norm = np.linalg.norm(x - x_err, np.inf)
@@ -32,7 +38,7 @@ def error_analysis(A, b, A_err, b_err):
 
     A_cond = np.linalg.cond(A, p=np.inf)
 
-    dx_max = max_relative_error(A, b, A_err, b_err, A_cond)
+    dx_max = max_relative_error_matrix(A, b, A_err, b_err, A_cond)
     dx_obs = obs_relative_error(x, x_err)
 
     return x, x_err, dx_max, dx_obs

@@ -53,6 +53,10 @@
 		\item Basis \(B\), Mantissenlänge \(n\), Exponentenbereich \([e_{\min}, e_{\max}]\)
 		\item Normalisierte Zahl: \(m_1 \neq 0\)
 		\item Bias: \(bias = B^{l-1} - 1\) für \(l\)-stellige Exponentendarstellung
+    \item Grösster Exponent: $B^{\text{Stellen von e}} - 1$
+    \item Kleinste positive Zahl: \(x_{\min} = B^{e_{\min}-1}\)
+    \item Grösste Zahl: \(x_{\max} = (1 - B^{-n}) \cdot B^{e_{\max}}\)
+    \item Anzahl der Maschinenzahlen: \(|M| = B^n \cdot (B^{e_{\max} - e_{\min} + 1} - 1) + 1\)
 	\end{itemize}
 
 	\section*{Fehleranalyse}
@@ -94,7 +98,7 @@
       \begin{equation*}
         |x_n - \overline{x}| \leq \frac{\alpha}{1 - \alpha} |x_n - x_{n-1}|
       \end{equation*}
-    \item Umformung: $\left | \frac{F(x) - F(y)}{x - y}{x - y} \right | \leq \alpha$ 
+    \item Umformung: $\left | \frac{F(x) - F(y)}{x - y} \right | \leq \alpha$ 
   \end{itemize}
   
   \columnbreak
@@ -105,7 +109,7 @@
   \end{equation*}
   Für den Startwert $x_0$ muss gelten, dass $f(x_0) \ne 0$ und $f'(x_0) \ne 0$.
   Ein geeigneter Startwert kann durch die Nullstellenbestimmung der Ableitungsfunktion gefunden werden.
-  \subsubsection*{Vereinfachte Newton-Verfahren}
+  \subsubsection*{Vereinfachtes Newton-Verfahren}
   \begin{itemize}
     \item Fixierter Ableitungswert: \(x_{n+1} = x_n - \frac{f(x_n)}{f'(x_0)}\)
     \item Sekantenverfahren: \(x_{n+1} = x_n - f(x_n) \cdot \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}\)
@@ -400,5 +404,56 @@
     \item Approximierter Eigenwert: \(\lambda^{(k)} = \frac{(v^{(k)})^T A v^{(k)}}{(v^{(k)})^T v^{(k)}}\)
   \end{itemize}
   \pagebreak
+
+\section*{Ableitungsregeln}
+\textbf{Summenregel}
+\begin{equation*}
+    (f+g)' = f' + g'
+\end{equation*}
+\textbf{Kettenregel}
+\begin{equation*}
+    (f \circ g)' = f'(g) \cdot g'
+\end{equation*}
+\textbf{Produktregel}
+\begin{equation*}
+    (f \cdot g)' = f' \cdot g + f \cdot g'
+\end{equation*}
+\textbf{Quotientenregel}
+\begin{equation*}
+    \left(\frac{f}{g}\right)' = \frac{f' \cdot g - f \cdot g'}{g^2}
+\end{equation*}
+\textbf{Potenzregel}
+\begin{equation*}
+    (x^n)' = n \cdot x^{n-1}
+\end{equation*}
+\textbf{Ableitung der Exponentialfunktion}
+\begin{equation*}
+    (e^x)' = e^x
+\end{equation*}
+\textbf{Ableitung des Logarithmus}
+\begin{equation*}
+    (\ln(x))' = \frac{1}{x}
+\end{equation*}
+
+\textbf{Ableitung der Sinusfunktion}
+\begin{equation*}
+    (\sin(x))' = \cos(x)
+\end{equation*}
+\textbf{Ableitung der Kosinusfunktion}
+\begin{equation*}
+    (\cos(x))' = -\sin(x)
+\end{equation*}
+\textbf{Ableitung der Tangensfunktion}
+\begin{equation*}
+    (\tan(x))' = \frac{1}{\cos^2(x)}
+\end{equation*}
+
+\textbf{Ableitung der Umkehrfunktionen}
+\begin{itemize}
+    \item $(\arcsin(x))' = \frac{1}{\sqrt{1-x^2}}$
+    \item $(\arccos(x))' = \frac{-1}{\sqrt{1-x^2}}$
+    \item $(\arctan(x))' = \frac{1}{1+x^2}$
+    \item Generell gilt: $(f^{-1}(y))' = \frac{1}{f^(f^{-1}(y))}$
+\end{itemize}
 \end{multicols*}
 \end{document}

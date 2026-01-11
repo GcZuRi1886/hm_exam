@@ -85,6 +85,17 @@ def a_priori_error(B, x0, x1, iterations):
     norm_diff = np.linalg.norm(x1 - x0, ord=np.inf)
     return (norm_B ** iterations / (1 - norm_B)) * norm_diff
 
+def a_priori_iterations(B, x0, x1, tolerance):
+    norm_B = np.linalg.norm(B, np.inf)
+
+    if norm_B >= 1:
+        raise ValueError("Jacobi-Verfahren konvergiert nicht (||B|| >= 1).")
+    error0 = np.linalg.norm(x1 - x0, np.inf)
+
+    # a-priori Abschätzung
+    k = np.log((tolerance * (1 - norm_B)) / error0) / np.log(norm_B)
+    return int(np.ceil(k))
+
 def run_function(function, matrix_calc, matrix_approx, vector, initial_guess, iterations=None, tolerance=None):
     """Runs the given function and computes error estimates."""
 

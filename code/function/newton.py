@@ -12,7 +12,7 @@ def newton_method(func, dfunc, x0):
 
     while True:
         x1 = x0 - func(x0) / dfunc(x0)
-        if abs(x1 - x0) < precision:
+        if np.abs(x1 - x0) < precision:
             return x1
         x0 = x1
         
