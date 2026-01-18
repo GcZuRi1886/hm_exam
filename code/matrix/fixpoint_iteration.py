@@ -10,6 +10,15 @@ def prepare_jacobi(A, b):
     D_inv_b = D_inv @ b
     return B, D_inv_b
 
+def prepare_jacobi_alternative(A, b, omega):
+    """Prepares the matrix A and b vector for the Jacobi method."""
+    D = np.diag(np.diag(A))
+    L_plus_R = A - D
+    D_inv = np.linalg.inv(D)
+    B = (-1) * (omega * D_inv @ ( (omega - 1) / omega * D + L_plus_R))
+    D_inv_b = omega * D_inv @ b
+    return B, D_inv_b
+
 def prepare_gauss_seidel(A, b):
     """Prepares the matrix A and b vector for the Gauss-Seidel method."""
     D = np.diag(np.diag(A))

@@ -9,7 +9,9 @@ def banach(x):
 
     alpha = np.abs((f(max) - f(min)) / (max - min))
     if 0 < alpha < 1:
-        print(f"Successful with alpha: {alpha}")
+        print(f"Banach successful with alpha: {alpha}")
+    else:
+        print(f"Banach failed with alpha: {alpha} (no or multiple fixpoints)")
 
 def a_posteriori(alpha, x_n, x_n_1):
     """

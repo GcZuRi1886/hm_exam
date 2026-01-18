@@ -33,6 +33,24 @@ def calculate_eigenvectors_and_eigenvalues(matrix, tMatrix=None):
     return eigenvalues, eigenvectors
 
 
+def characteristic_polynomial(A: np.ndarray, *, tol: float = 1e-10) -> np.ndarray:
+    """
+    Berechnet die Koeffizienten des charakteristischen Polynoms von A:
+    """
+    A = np.asarray(A)
+    if A.ndim != 2 or A.shape[0] != A.shape[1]:
+        raise ValueError("A muss eine quadratische 2D-Matrix sein.")
+
+    eigvals = np.linalg.eigvals(A)
+
+    coeffs = np.poly(eigvals)
+
+    if np.max(np.abs(np.imag(coeffs))) < tol:
+        coeffs = np.real(coeffs)
+
+    coeffs[np.abs(coeffs) < tol] = 0.0
+    return coeffs
+
 def qr_eigenvalues(A, num_iterations=100):
     # Berechnet Eigenwerte der nxn-Matrix A mit QR-Algorithmus
 
@@ -62,6 +80,8 @@ if __name__ == "__main__":
 
 
     eigenvalues, eigenvectors = calculate_eigenvectors_and_eigenvalues(A)
+    characteristic_polynom = characteristic_polynomial(A)
+    print(f"characteristic_polynomial: {characteristic_polynom}")
     print(f"Eigenvalues:\n{eigenvalues}\n")
     print("Eigenvectors:")
     for vec in eigenvectors.T:
