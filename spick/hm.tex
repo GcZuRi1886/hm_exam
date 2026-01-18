@@ -53,10 +53,12 @@
 		\item Basis \(B\), Mantissenlänge \(n\), Exponentenbereich \([e_{\min}, e_{\max}]\)
 		\item Normalisierte Zahl: \(m_1 \neq 0\)
 		\item Bias: \(bias = B^{l-1} - 1\) für \(l\)-stellige Exponentendarstellung
-    \item Grösster Exponent: $B^{\text{Stellen von e}} - 1$
+    \item Grösster Exponent: $e_{\max} = B^{\text{Stellen von e}} - 1 - bias$
+    \item Kleinster Exponent: $e_{\min} = -$bias
     \item Kleinste positive Zahl: \(x_{\min} = B^{e_{\min}-1}\)
     \item Grösste Zahl: \(x_{\max} = (1 - B^{-n}) \cdot B^{e_{\max}}\)
-    \item Anzahl der Maschinenzahlen: \(|M| = B^n \cdot (B^{e_{\max} - e_{\min} + 1} - 1) + 1\)
+    \item Kleinste Zahl: \(x_{\text{denormalisiert}} = B^{e_{\min} - n + 1}\)
+    \item Anzahl der Maschinenzahlen (mit 0): $|M| = 2 \cdot (B - 1) \cdot B^{n + l - 1} + 1$
 	\end{itemize}
 
 	\section*{Fehleranalyse}
@@ -381,6 +383,7 @@
     \item Dimension des Eigenraums: geometrische Vielfachheit
     \item Vielfachheit eines Eigenwerts als Nullstelle des charakteristischen Polynoms: algebraische Vielfachheit
     \item \(1 \leq \text{geometrische Vielfachheit} \leq \text{algebraische Vielfachheit}\)
+    \item Algebraische Vielfachheit 2 $\Rightarrow$ Determinante = 0 $\Rightarrow \varDelta = b^2 + 4ac$
   \end{itemize}
   \subsection*{Diagonalisierbarkeit / Ähnlichkeit}
   \begin{itemize}
@@ -454,6 +457,43 @@
     \item $(\arccos(x))' = \frac{-1}{\sqrt{1-x^2}}$
     \item $(\arctan(x))' = \frac{1}{1+x^2}$
     \item Generell gilt: $(f^{-1}(y))' = \frac{1}{f^(f^{-1}(y))}$
+\end{itemize}
+
+
+\subsection*{Grenzwertregel von Bernoulli-de l'Hôpital}
+\begin{itemize}
+  \item Die Grenzwertregel von Bernoulli-de l'Hôpital ist ein Verfahren zur Bestimmung von Grenzwerten, die in der Form $\frac{0}{0}$ oder $\frac{\infty}{\infty}$ vorliegen.
+    \begin{equation*}
+        \lim_{x \to x_0} \frac{f(x)}{g(x)} = \lim_{x \to x_0} \frac{f'(x)}{g'(x)}
+    \end{equation*}
+  \item Falls der Grenzwert $\lim_{x \to x_0} \frac{f(x)}{g(x)}$ in der Form $0 \cdot \infty$ vorliegt, kann die Regel wie folgt umgeformt werden:
+    \begin{equation*}
+        \lim_{x \to x_0} f(x) \cdot g(x) = \lim_{x \to x_0} \frac{f(x)}{\frac{1}{g(x)}}
+    \end{equation*}
+  \item Falls der Grenzwert in der Form $\infty - \infty$ vorliegt, kann die Regel wie folgt umgeformt werden:
+    \begin{equation*}
+        \lim_{x \to x_0} f(x) - g(x) = \lim_{x \to x_0} \frac{f(x) \cdot g(x)}{g(x)}
+    \end{equation*}
+\end{itemize}
+
+\subsection*{Basiswechsel}
+\begin{itemize}
+    \item Umwandlung Dezimal in ein anderes Zahlensystem mit Basis B:
+    \begin{itemize}
+        \item Ganzzahliger Teil: wiederholte Division durch B, Reste notieren (von unten nach oben lesen)
+        \item Dezimalteil: wiederholte Multiplikation mit B, ganzzahlige Teile notieren (von oben nach unten lesen)
+        \item Beispiel: Dezimal 13.625 in Binär
+        \begin{itemize}
+            \item Ganzzahliger Teil: \(13 \div 2 = 6\) Rest 1, \(6 \div 2 = 3\) Rest 0, \(3 \div 2 = 1\) Rest 1, \(1 \div 2 = 0\) Rest 1 $\rightarrow$ 1101
+            \item Dezimalteil: \(0.625 \times 2 = 1.25\) Ganzzahliger Teil 1, \(0.25 \times 2 = 0.5\) Ganzzahliger Teil 0, \(0.5 \times 2 = 1.0\) Ganzzahliger Teil 1 $\rightarrow$ 101
+            \item Ergebnis: \(13.625_{10} = 1101.101_2\)
+        \end{itemize}
+    \end{itemize}
+    \item Umwandlung von Basis B in Dezimal:
+    \begin{itemize}
+        \item Ganzzahliger Teil: \(Z = \sum_{i=0}^{n} z_i \cdot B^i\)
+        \item Dezimalteil: \(D = \sum_{i=1}^{m} z_{-i} \cdot B^{-i}\)
+    \end{itemize}
 \end{itemize}
 \end{multicols*}
 \end{document}
