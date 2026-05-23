@@ -32,7 +32,7 @@
   scope: "parent",
   float: true,
   block(width: 100%, align(center)[
-    #text(size: 14pt, weight: "bold")[Höhere Mathematik 1]
+    #text(size: 14pt, weight: "bold")[Höhere Mathematik 1 und 2]
   ])
 )
 
@@ -361,4 +361,187 @@ $ A v = lambda v $
 - Umwandlung von Basis B in Dezimal:
   - Ganzzahliger Teil: $Z = sum_(i=0)^n z_i dot B^i$
   - Dezimalteil: $D = sum_(i=1)^m z_(-i) dot B^(-i)$
+
+#pagebreak()
+
+= Iterative Verfahren für nichtlineare Gleichungssysteme
+
+== Paritelle Ableitung
+- Für $f: RR^n arrow RR$ ist die partielle Ableitung von $f$ nach der Variablen $x_i$ an der Stelle $x$ definiert als:
+  $ partial f / partial x_i (x) = lim_(h -> 0) (f(x_1, dots, x_(i-1), x_i + h, x_(i+1), dots, x_n) - f(x)) / h $
+
+== Jacobimatrix
+- Für $F: RR^n arrow RR^m$ mit $F(x) = (f_1(x), f_2(x), dots, f_m(x))^T$ ist die Jacobimatrix von $F$ an der Stelle $x$ definiert als:
+  $ J_F(x) = mat(partial f_1 / partial x_1, partial f_1 / partial x_2, dots, partial f_1 / partial x_n; partial f_2 / partial x_1, partial f_2 / partial x_2, dots, partial f_2 / partial x_n; dots; partial f_m / partial x_1, partial f_m / partial x_2, dots, partial f_m / partial x_n) $
+
+== Newton-Verfahren für nichtlineare Gleichungssysteme
+- Gegeben: $F: RR^n arrow RR^n$, $F(x) = 0$
+- Iterationsvorschrift: $x^((k+1)) = x^((k)) - J_F(x^((k)))^(-1) F(x^((k)))$
+- $J_F(x)$ ist die Jacobimatrix von $F$ an der Stelle $x$
+- Konvergenz: Quadratische Konvergenz, wenn $F$ zweimal stetig differenzierbar ist und $J_F(overline(x))$ invertierbar ist
+
+== Vereinfachtes Newton-Verfahren für nichtlineare Gleichungssysteme
+- Fixierter Jacobimatrix: $x^((k+1)) = x^((k)) - J_F(x^((0)))^(-1) F(x^((k)))$
+- Sekantenverfahren: $x^((k+1)) = x^((k)) - J_F(x^((k)))^(-1) F(x^((k)))$ mit $J_F(x^((k)))$ approximiert durch finite Differenzen:
+  $ J_F(x^((k))) approx (F(x^((k))) - F(x^((k-1)))) / (x^((k)) - x^((k-1))) $
+
+== Gedämpftes Newton-Verfahren für Systeme
+- Iterationsvorschrift: Berechne $delta^((k))$ aus $J_F(x^((k))) delta^((k)) = -F(x^((k)))$
+- Finde minimales $k in {0,1,...,k_max}$ mit $||F(x^((k)) + delta^((k)) / 2^k)||_2 < ||F(x^((k)))||_2$
+- Setze $x^((k+1)) = x^((k)) + delta^((k)) / 2^k$
+- Falls kein $k$ gefunden: rechne mit $k=0$ weiter
+- Faustregel: $k_max = 4$
+
+= Ausgleichsrechnung
+
+== Interpolation
+
+=== Lagrange-Interpolationsformel
+- Gegeben: $n+1$ Stützpunkte $(x_i, y_i)$, $i=0,...,n$ mit $x_i != x_j$ für $i != j$
+- Eindeutiges Interpolationspolynom vom Grad $<= n$:
+  $ P_n(x) = sum_(i=0)^n l_i(x) y_i $
+- Lagrange-Basispolynome:
+  $ l_i(x) = product_(j=0, j!=i)^n (x - x_j) / (x_i - x_j) $
+
+=== Kubische Splineinterpolation
+- Für $n+1$ Stützpunkte: $n$ kubische Polynome $S_i$ auf $[x_i, x_{i+1}]$:
+  $ S_i(x) = a_i + b_i(x-x_i) + c_i(x-x_i)^2 + d_i(x-x_i)^3 $
+- Bedingungen (12 für 4 Punkte):
+  - Interpolation: $S_i(x_i) = y_i$, $S_(n-1)(x_n) = y_n$
+  - Stetiger Übergang: $S_i(x_(i+1)) = S_(i+1)(x_(i+1))$
+  - Keine Knicke: $S'_i(x_(i+1)) = S'_(i+1)(x_(i+1))$
+  - Gleiche Krümmung: $S''_i(x_(i+1)) = S''_(i+1)(x_(i+1))$
+  - +2 Randbedingungen nach Typ:
+- Natürliche kubische Spline: $S''_0(x_0) = 0$, $S''_(n-1)(x_n) = 0$
+- Periodische kubische Spline: $S'_0(x_0) = S'_(n-1)(x_n)$, $S''_0(x_0) = S''_(n-1)(x_n)$
+- Not-a-knot: $S'''_0(x_1) = S'''_1(x_1)$, $S'''_(n-2)(x_(n-1)) = S'''_(n-1)(x_(n-1))$
+
+== Lineare Ausgleichsrechnung
+
+=== Problemstellung
+- Gegeben: $n$ Datenpunkte $(x_i, y_i)$
+- Gesucht: Funktion $f(x) = lambda_1 f_1(x) + ... + lambda_m f_m(x)$ (Linearkombination von Basisfunktionen)
+- Minimiere Fehlerfunktional (kleinste Fehlerquadrate / least squares):
+  $ E(f) = ||y - f(x)||_2^2 = sum_(i=1)^n (y_i - f(x_i))^2 arrow min $
+
+=== Normalgleichungssystem
+- Designmatrix $A in RR^(n times m)$ mit $A_(i j) = f_j(x_i)$
+- Normalgleichungssystem: $A^T A lambda = A^T y$
+- Lösung gibt optimale Parameter $lambda = (lambda_1, ..., lambda_m)^T$
+- Stabiler via QR-Zerlegung: $A = Q R arrow R lambda = Q^T y$
+
+=== Ausgleichsgerade
+- $f(x) = a x + b$, Designmatrix: $A = mat(x_1, 1; dots.v, dots.v; x_n, 1)$
+- Normalgleichungssystem:
+  $ mat(sum x_i^2, sum x_i; sum x_i, n) vec(a, b) = vec(sum x_i y_i, sum y_i) $
+
+== Nichtlineare Ausgleichsrechnung
+
+=== Gauss-Newton-Verfahren
+- Gegeben: $g(lambda) = y - f(lambda)$, Jacobimatrix $D g(lambda)$
+- Iterationsvorschrift: Löse lineares Ausgleichsproblem
+  $ min ||g(lambda^((k))) + D g(lambda^((k))) delta^((k))||_2^2 $
+  via QR-Zerlegung von $D g(lambda^((k))) = Q^((k)) R^((k))$:
+  $ R^((k)) delta^((k)) = -Q^((k)T) g(lambda^((k))) $
+- Setze $lambda^((k+1)) = lambda^((k)) + delta^((k))$
+
+=== Gedämpftes Gauss-Newton-Verfahren
+- Wie Gauss-Newton, aber akzeptiere $delta^((k))$ nur wenn:
+  $ ||g(lambda^((k)) + delta^((k)) / 2^p)||_2^2 < ||g(lambda^((k)))||_2^2 $
+- Finde minimales $p in {0,1,...,p_max}$ und setze:
+  $ lambda^((k+1)) = lambda^((k)) + delta^((k)) / 2^p $
+
+= Numerische Integration
+
+== Quadraturformeln (Newton-Cotes)
+
+=== Einfache Formeln ($[a,b]$)
+- Rechteckregel: $R f = f((a+b)/2) dot (b-a)$
+- Trapezregel: $T f = (f(a)+f(b))/2 dot (b-a)$
+- Simpsonregel: $S f = (b-a)/6 [f(a) + 4 f((a+b)/2) + f(b)]$
+
+=== Summierte Formeln ($h = (b-a)/n$, $x_i = a + i h$)
+- Summierte Rechteckregel:
+  $ R f(h) = h sum_(i=0)^(n-1) f(x_i + h/2) $
+- Summierte Trapezregel:
+  $ T f(h) = h [(f(a)+f(b))/2 + sum_(i=1)^(n-1) f(x_i)] $
+- Summierte Simpsonregel:
+  $ S f(h) = h/3 [1/2 f(a) + sum_(i=1)^(n-1) f(x_i) + 2 sum_(i=1)^(n) f((x_(i-1)+x_i)/2) + 1/2 f(b)] $
+  Alternativ: $S f(h) = (T f(h) + 2 R f(h)) / 3$
+
+#colbreak()
+
+== Fehlerabschätzung Quadraturformeln
+
+$ |integral_a^b f(x) d x - R f(h)| <= h^2/24 (b-a) max |f''| $
+$ |integral_a^b f(x) d x - T f(h)| <= h^2/12 (b-a) max |f''| $
+$ |integral_a^b f(x) d x - S f(h)| <= h^4/2880 (b-a) max |f^((4))| $
+
+== Gauss-Formeln
+
+Nicht-äquidistante Stützstellen für höhere Genauigkeit. Für $integral_a^b f(x) d x approx (b-a)/2 sum a_i f(x_i)$:
+- $G_1 f = (b-a) dot f((a+b)/2)$
+- $G_2 f = (b-a)/2 [f((a+b)/2 - (b-a)/(2sqrt(3))) + f((a+b)/2 + (b-a)/(2sqrt(3)))]$
+- $G_3 f = (b-a)/2 [5/9 f(x_(-)) + 8/9 f((a+b)/2) + 5/9 f(x_(+))]$ mit $x_(plus.minus) = (a+b)/2 plus.minus sqrt(0.6) dot (b-a)/2$
+
+
+== Romberg-Extrapolation
+
+- Berechne Trapezwerte $T_(j 0) = T f(h_j)$ mit $h_j = (b-a)/2^j$ für $j = 0,1,...,m$
+- Extrapoliere via Rekursion:
+  $ T_(j k) = (4^k T_(j+1,k-1) - T_(j,k-1)) / (4^k - 1) $
+- Schema (z.B. $m=3$):
+  $T_(00) arrow T_(01) arrow T_(02) arrow T_(03)$
+
+  $T_(10) arrow T_(11) arrow T_(12)$
+
+  $T_(20) arrow T_(21)$
+
+  $T_(30)$
+
+= Gewöhnliche DGL
+
+== Definition
+- DGL $n$-ter Ordnung: $y^((n))(x) = f(x, y(x), y'(x), ..., y^((n-1))(x))$
+- Anfangswertproblem (AWP): DGL + $n$ Anfangsbedingungen bei $x_0$
+
+== Richtungsfeld
+- $y'(x) = f(x, y(x))$ gibt Steigung der Lösungskurve in jedem Punkt $(x, y)$
+- Lösungskurven verlaufen stets tangential zu den Richtungspfeilen
+
+== Einschrittverfahren (1. Ordnung)
+- Allgemein: $x_(i+1) = x_i + h$, $y_(i+1) = y_i + "Steigung" dot h$
+- Schrittweite: $h = (b-a)/n$, Gitterstellen $x_i = a + i h$
+
+=== Euler-Verfahren ($p=1$)
+$ y_(i+1) = y_i + h dot f(x_i, y_i) $
+
+=== Mittelpunkt-Verfahren ($p=2$)
+$ x_(h\/2) = x_i + h/2, quad y_(h\/2) = y_i + h/2 dot f(x_i, y_i) $
+$ y_(i+1) = y_i + h dot f(x_(h\/2), y_(h\/2)) $
+
+=== Modifiziertes Euler-Verfahren / Heun ($p=2$)
+$ k_1 = f(x_i, y_i), quad y^"Euler"_(i+1) = y_i + h k_1 $
+$ k_2 = f(x_(i+1), y^"Euler"_(i+1)) $
+$ y_(i+1) = y_i + h dot (k_1 + k_2)/2 $
+
+=== Klassisches Runge-Kutta ($p=4$)
+$ k_1 = f(x_i, y_i) $
+$ k_2 = f(x_i + h/2, y_i + h/2 k_1) $
+$ k_3 = f(x_i + h/2, y_i + h/2 k_2) $
+$ k_4 = f(x_i + h, y_i + h k_3) $
+$ y_(i+1) = y_i + h/6 (k_1 + 2k_2 + 2k_3 + k_4) $
+
+== DGL höherer Ordnung $arrow$ System 1. Ordnung
+- DGL $k$-ter Ordnung: Einführen von Hilfsfunktionen $z_1 = y$, $z_2 = y'$, ..., $z_k = y^((k-1))$
+- System: $z' = f(x, z)$ mit $z(x_0) = (y(x_0), y'(x_0), ..., y^((k-1))(x_0))^T$
+- Lösung $y(x)$ steht in der ersten Komponente $z_1(x)$
+- Alle Einschrittverfahren direkt auf Vektoren anwendbar ($y_i, f$ werden vektorwertig)
+
+== Stabilität
+- Stabilitätsbedingung für Euler auf $y' = -alpha y$ ($alpha > 0$):
+  $ |1 - h alpha| < 1 quad arrow quad 0 < h < 2/alpha $
+- Stabilitätsfunktion $g(z)$: $y_(i+1) = g(h alpha) dot y_i$
+- Stabilitätsintervall: $z in (0, alpha)$ mit $|g(z)| < 1$
+- Für $s$-stufige explizite Runge-Kutta: $g(z)$ ist Polynom vom Grad $s$
 
