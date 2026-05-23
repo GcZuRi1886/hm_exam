@@ -374,13 +374,13 @@ $ A v = lambda v $
 - Für $F: RR^n arrow RR^m$ mit $F(x) = (f_1(x), f_2(x), dots, f_m(x))^T$ ist die Jacobimatrix von $F$ an der Stelle $x$ definiert als:
   $ J_F(x) = mat(partial f_1 / partial x_1, partial f_1 / partial x_2, dots, partial f_1 / partial x_n; partial f_2 / partial x_1, partial f_2 / partial x_2, dots, partial f_2 / partial x_n; dots; partial f_m / partial x_1, partial f_m / partial x_2, dots, partial f_m / partial x_n) $
 
-== Newton-Verfahren für nichtlineare Gleichungssysteme
+== Newton-Verfahren für Systeme
 - Gegeben: $F: RR^n arrow RR^n$, $F(x) = 0$
 - Iterationsvorschrift: $x^((k+1)) = x^((k)) - J_F(x^((k)))^(-1) F(x^((k)))$
 - $J_F(x)$ ist die Jacobimatrix von $F$ an der Stelle $x$
 - Konvergenz: Quadratische Konvergenz, wenn $F$ zweimal stetig differenzierbar ist und $J_F(overline(x))$ invertierbar ist
 
-== Vereinfachtes Newton-Verfahren für nichtlineare Gleichungssysteme
+== Vereinfachtes Newton-Verfahren für Systeme
 - Fixierter Jacobimatrix: $x^((k+1)) = x^((k)) - J_F(x^((0)))^(-1) F(x^((k)))$
 - Sekantenverfahren: $x^((k+1)) = x^((k)) - J_F(x^((k)))^(-1) F(x^((k)))$ mit $J_F(x^((k)))$ approximiert durch finite Differenzen:
   $ J_F(x^((k))) approx (F(x^((k))) - F(x^((k-1)))) / (x^((k)) - x^((k-1))) $
