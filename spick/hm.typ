@@ -532,6 +532,15 @@ $ y_(i+1) = y_i + h dot f(x_i, y_i) $
 $ x_(h\/2) = x_i + h/2, quad y_(h\/2) = y_i + h/2 dot f(x_i, y_i) $
 $ y_(i+1) = y_i + h dot f(x_(h\/2), y_(h\/2)) $
 
+*Schritte:* (1) $f$ am aktuellen Punkt auswerten, (2) halben Euler-Schritt → Mittelpunkt $(x_(h\/2), y_(h\/2))$, (3) $f$ am Mittelpunkt auswerten, (4) ganzen Schritt mit dieser Steigung
+
+*Beispiel System (RLC-Kreis):* $L=1, R=80, C=1/2500, U=100$, $z_1=q, z_2=dot(q)$, $bold(z)^((0))=(0,0)^T$, $h=0.01$
+$ f(t, bold(z)) = vec(z_2, 100 - 80 z_2 - 2500 z_1) $
+$ f(0, bold(y)^((0))) = vec(0, 100), quad bold(y)_(h\/2) = vec(0,0) + 0.005 vec(0,100) = vec(0, 0.5) $
+$ f(x_(h\/2), bold(y)_(h\/2)) = f(0.005, vec(z_1=0, z_2=0.5)) $
+$ = vec(z_2, 100 - 80 z_2 - 2500 z_1) = vec(0.5, 100 - 80 dot 0.5 - 2500 dot 0) = vec(0.5, 60) $
+$ bold(y)^((1)) = vec(0,0) + 0.01 vec(0.5, 60) = vec(0.005, 0.6) $
+
 === Modifiziertes Euler-Verfahren / Heun ($p=2$)
 $ k_1 = f(x_i, y_i), quad y^"Euler"_(i+1) = y_i + h k_1 $
 $ k_2 = f(x_(i+1), y^"Euler"_(i+1)) $
