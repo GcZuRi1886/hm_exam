@@ -326,6 +326,7 @@ $ A v = lambda v $
 - *Kettenregel:* $(f compose g)' = f'(g) dot g'$
 - *Produktregel:* $(f dot g)' = f' dot g + f dot g'$
 - *Quotientenregel:* $(f / g)' = (f' dot g - f dot g') / g^2$
+- *Quotientenregel f = 1:* $(1 / g)' = -g' / g^2$
 - *Potenzregel:* $(x^n)' = n dot x^(n-1)$
 - *Exponentialfunktion:* $(e^x)' = e^x$
 - *Logarithmus:* $(ln(x))' = 1 / x$
@@ -367,16 +368,20 @@ $ A v = lambda v $
 = Iterative Verfahren für nichtlineare Gleichungssysteme
 
 == Paritelle Ableitung
-- Für $f: RR^n arrow RR$ ist die partielle Ableitung von $f$ nach der Variablen $x_i$ an der Stelle $x$ definiert als:
-  $ partial f / partial x_i (x) = lim_(h -> 0) (f(x_1, dots, x_(i-1), x_i + h, x_(i+1), dots, x_n) - f(x)) / h $
-
+- Die partielle Ableitung von $f: RR^n arrow RR$ wird wie folgt definiert:
+$ partial f / partial x_i (x) = lim_(h -> 0) (f(x_1, dots, x_(i-1), x_i + h, x_(i+1), dots, x_n) - f(x)) / h $
+- Beispiel: $f(x,y) = x^2 y + sin(x y)$
+  - $partial f / partial x = 2 x y + y cos(x y)$
+  - $partial f / partial y = x^2 + x cos(x y)$
 == Jacobimatrix
 - Für $F: RR^n arrow RR^m$ mit $F(x) = (f_1(x), f_2(x), dots, f_m(x))^T$ ist die Jacobimatrix von $F$ an der Stelle $x$ definiert als:
   $ J_F(x) = mat(partial f_1 / partial x_1, partial f_1 / partial x_2, dots, partial f_1 / partial x_n; partial f_2 / partial x_1, partial f_2 / partial x_2, dots, partial f_2 / partial x_n; dots; partial f_m / partial x_1, partial f_m / partial x_2, dots, partial f_m / partial x_n) $
+- Beispiel: $F(x,y) = (x^2 y + sin(x y), x^2 + y^2)^T$
+  - $J_F(x,y) = mat(2 x y + y cos(x y), x^2 + x cos(x y); 2 x, 2 y)$
 
 == Newton-Verfahren für Systeme
 - Gegeben: $F: RR^n arrow RR^n$, $F(x) = 0$
-- Iterationsvorschrift: $x^((k+1)) = x^((k)) - J_F(x^((k)))^(-1) F(x^((k)))$
+- Iterationsvorschrift: $x^((k+1)) = x^((k)) - J_F(x^((k)))^(-1) F(x^((k)))$ oder äquivalent: Löse $J_F(x^((k))) delta^((k)) = F(x^((k)))$ und setze $x^((k+1)) = x^((k)) - delta^((k))$
 - $J_F(x)$ ist die Jacobimatrix von $F$ an der Stelle $x$
 - Konvergenz: Quadratische Konvergenz, wenn $F$ zweimal stetig differenzierbar ist und $J_F(overline(x))$ invertierbar ist
 
@@ -402,6 +407,8 @@ $ A v = lambda v $
   $ P_n(x) = sum_(i=0)^n l_i(x) y_i $
 - Lagrange-Basispolynome:
   $ l_i(x) = product_(j=0, j!=i)^n (x - x_j) / (x_i - x_j) $
+
+#colbreak()
 
 === Kubische Splineinterpolation
 - Für $n+1$ Stützpunkte: $n$ kubische Polynome $S_i$ auf $[x_i, x_{i+1}]$:
@@ -438,7 +445,7 @@ $ A v = lambda v $
 == Nichtlineare Ausgleichsrechnung
 
 === Gauss-Newton-Verfahren
-- Gegeben: $g(lambda) = y - f(lambda)$, Jacobimatrix $D g(lambda)$
+- Gegeben: $g(lambda) = y - f(lambda)$, Jacobimatrix $D g(lambda)$ (partielle Ableitungen nach $lambda$ bzw. Fitparametern)
 - Iterationsvorschrift: Löse lineares Ausgleichsproblem
   $ min ||g(lambda^((k))) + D g(lambda^((k))) delta^((k))||_2^2 $
   via QR-Zerlegung von $D g(lambda^((k))) = Q^((k)) R^((k))$:
@@ -451,6 +458,8 @@ $ A v = lambda v $
 - Finde minimales $p in {0,1,...,p_max}$ und setze:
   $ lambda^((k+1)) = lambda^((k)) + delta^((k)) / 2^p $
 
+#colbreak()
+
 = Numerische Integration
 
 == Quadraturformeln (Newton-Cotes)
@@ -460,16 +469,16 @@ $ A v = lambda v $
 - Trapezregel: $T f = (f(a)+f(b))/2 dot (b-a)$
 - Simpsonregel: $S f = (b-a)/6 [f(a) + 4 f((a+b)/2) + f(b)]$
 
-=== Summierte Formeln ($h = (b-a)/n$, $x_i = a + i h$)
+=== Summierte Formeln 
+- *$h = (b-a)/n$, $n = (b-a)/h$, $x_i = a + i h$*
 - Summierte Rechteckregel:
   $ R f(h) = h sum_(i=0)^(n-1) f(x_i + h/2) $
 - Summierte Trapezregel:
   $ T f(h) = h [(f(a)+f(b))/2 + sum_(i=1)^(n-1) f(x_i)] $
 - Summierte Simpsonregel:
+  - $n$ muss gerade sein
   $ S f(h) = h/3 [1/2 f(a) + sum_(i=1)^(n-1) f(x_i) + 2 sum_(i=1)^(n) f((x_(i-1)+x_i)/2) + 1/2 f(b)] $
   Alternativ: $S f(h) = (T f(h) + 2 R f(h)) / 3$
-
-#colbreak()
 
 == Fehlerabschätzung Quadraturformeln
 
@@ -488,6 +497,7 @@ Nicht-äquidistante Stützstellen für höhere Genauigkeit. Für $integral_a^b f
 == Romberg-Extrapolation
 
 - Berechne Trapezwerte $T_(j 0) = T f(h_j)$ mit $h_j = (b-a)/2^j$ für $j = 0,1,...,m$
+- Anzahl Teilintervalle: $n_j = (b-a)/h_j = 2^j$ (aus $h = (b-a)/n$ folgt $n = (b-a)/h$)
 - Extrapoliere via Rekursion:
   $ T_(j k) = (4^k T_(j+1,k-1) - T_(j,k-1)) / (4^k - 1) $
 - Schema (z.B. $m=3$):
@@ -498,6 +508,8 @@ Nicht-äquidistante Stützstellen für höhere Genauigkeit. Für $integral_a^b f
   $T_(20) arrow T_(21)$
 
   $T_(30)$
+
+#colbreak()
 
 = Gewöhnliche DGL
 

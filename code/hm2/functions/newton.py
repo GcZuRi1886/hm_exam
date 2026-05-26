@@ -40,7 +40,7 @@ def newton_method_step(funcDf, funcf, guess, norm_type=np.inf):
     delta = np.linalg.solve(Df_eval, f_eval).flatten()
     print(f"delta: {delta}")
     
-    new_guess = guess + delta
+    new_guess = guess - delta
     print(f"New guess: {new_guess}")
     
     return new_guess
@@ -98,3 +98,17 @@ def damped_newton_method(
 
     print("Maximale Iterationsanzahl erreicht.")
     return guess
+
+def calculate_delta(jacobian, func, guess):
+    """Berechnet den Newton-Schritt delta = Df(guess)^{-1} * f(guess)."""
+
+    Df_eval = jacobian(guess)
+    f_eval = func(guess)
+    
+    print(f"Jacobian evaluated at {guess}:\n{Df_eval}")
+    print(f"Function evaluated at {guess}:\n{f_eval}")
+    
+    delta = np.linalg.solve(Df_eval, f_eval).flatten()
+    print(f"delta: {delta}")
+    
+    return delta

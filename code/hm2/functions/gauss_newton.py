@@ -1,65 +1,106 @@
 import sympy as sp
 import numpy as np
 
-def gauss_newton_damped(
-    x: np.ndarray,
-    y: np.ndarray,
-    f,
-    initial_guess: np.ndarray,
-    p,
-    max_iterations: int = 100,
-    pmax: int = 100,
-    tolerance: float = 1e-6,
-    damping: bool = True,
+def gauss_newton(
+    model_sym: sp.Expr,
+    params: sp.Matrix,
+    f_sym: sp.Symbol,
+    f_data: np.ndarray,
+    y_data: np.ndarray,
+    lam0: np.ndarray,
+    tol: float = 1e-3,
+    max_iter: int = 100,
+    damping: bool = False,
+    pmax: int = 10,
+    norm: float = np.inf
 ) -> tuple[np.ndarray, int]:
     """
-    Führt das gedämpfte Gauss-Newton-Verfahren durch, um die Koeffizienten einer Ansatzfunktion zu fitten.
-
+    Gauss-Newton Verfahren für nichtlineare Ausgleichsprobleme.
+    
     Parameters:
-    x (np.ndarray): Unabhängige Variable (z.B. Anfangstemperatur, Gasdruck)
-    y (np.ndarray): Abhängige Variable (z.B. Masse der entwichenen Kohlenwasserstoff-Dämpfe)
-    f: Funktion, die die Form der Ansatzfunktion definiert (z.B. lambda T_Tank, T_Benzin, p_Tank, p_Benzin: ...)
-    initial_guess (np.ndarray): Anfangsschätzung für die Koeffizienten
-    max_iterations (int): Maximale Anzahl an Iterationen
-    pmax (int): Maximale Anzahl an Dämpfungsstufen
-    tolerance (float): Toleranz für die Konvergenz
-    damping (bool): Flag, um die Dämpfung zu aktivieren oder zu deaktivieren
-
+        model_sym : Symbolischer Ausdruck des Modells A(f, params)
+        params    : Sympy Matrix der Fitparameter z.B. sp.Matrix([A0, f0, c0])
+        f_sym     : Sympy Symbol für die unabhängige Variable
+        f_data    : Messwerte der unabhängigen Variable (x-Achse)
+        y_data    : Messwerte der abhängigen Variable (y-Achse)
+        lam0      : Startwerte der Fitparameter
+        tol       : Konvergenzkriterium für |delta|
+        max_iter  : Maximale Anzahl Iterationen
+        damping   : Gedämpftes Gauss-Newton Verfahren verwenden
+        pmax      : Maximale Anzahl Dämpfungsschritte pro Iteration
+        norm      : Norm für die Berechnung der Schrittgröße (z.B. np.inf für Maximumsnorm)
     Returns:
-    np.ndarray: Koeffizienten der Ansatzfunktion
-    int: Anzahl der durchgeführten Iterationen
+        lam       : Gefundene Fitparameter
+        iterations : Anzahl der durchgeführten Iterationen
     """
-    lam = initial_guess
+    # Jacobi-Matrix symbolisch berechnen
+    J_sym: sp.Matrix = sp.Matrix([model_sym]).jacobian(params)
+    print("Jacobi-Matrix (symbolisch):")
+    sp.pprint(J_sym)
 
-    g = sp.Matrix([y[k] - f(x[k], p) for k in range(len(x))])
-    Dg = g.jacobian(p)
+    # Lambdify für numerische Auswertung
+    sym_list: list[sp.Symbol] = [f_sym] + list(params)  #type: ignore
+    model_func = sp.lambdify(sym_list, model_sym, 'numpy')
+    J_func     = sp.lambdify(sym_list, J_sym,     'numpy')
 
-    g_lam = sp.lambdify([p], g, "numpy")
-    Dg_lam = sp.lambdify([p], Dg, "numpy")
+    def residuals(lam: np.ndarray) -> np.ndarray:
+        return model_func(f_data, *lam) - y_data
 
-    k = 0
-    increment = tolerance + 1
-    err_func = np.linalg.norm(g_lam(lam)) ** 2
+    def jacobian(lam: np.ndarray) -> np.ndarray:
+        rows: list[np.ndarray] = [J_func(fi, *lam).flatten() for fi in f_data]
+        return np.array(rows, dtype=float)
+    
+    def cost(lam: np.ndarray) -> float:
+        r: np.ndarray = residuals(lam)
+        print(f"r shape: {r.shape}, r: {r}")
+        return float(r @ r)
 
-    while increment > tolerance and k < max_iterations:
-        [Q, R] = np.linalg.qr(Dg_lam(lam))
-        delta = np.linalg.solve(
-            R, -Q.T @ g_lam(lam)
-        ).flatten()  # Achtung: flatten() braucht es, um aus dem Spaltenvektor delta wieder eine "flachen" Vektor zu machen, da g hier nicht mit Spaltenvektoren als Input umgehen kann
+    lam: np.ndarray = lam0.copy()
+    iterations: int = 0
+    for i in range(max_iter):
+        r: np.ndarray = residuals(lam)
+        J: np.ndarray = jacobian(lam)
+        delta: np.ndarray = np.linalg.solve(J.T @ J, -J.T @ r)
 
-        p_damp = 0
         if damping:
-            while p_damp < pmax and np.linalg.norm(g_lam(lam + delta)) ** 2 >= err_func:
-                delta = delta / (2**p_damp)
-                p_damp += 1
+            for p in range(pmax):
+                cost_new = cost(lam + delta / 2**p)
+                cost_old = cost(lam)
+                print(f"  p={p}: cost_new={cost_new}, cost_old={cost_old}")
+                if cost_new < cost_old:
 
-        # Update des Vektors Lambda
-        lam = lam + delta
-        err_func = np.linalg.norm(g_lam(lam)) ** 2
-        increment = np.linalg.norm(delta)
-        k = k + 1
-        print("Iteration: ", k)
-        print("lambda = ", lam)
-        print("Inkrement = ", increment)
-        print("Fehlerfunktional =", err_func)
-    return lam, k
+                # if cost(lam + delta / 2**p) < cost(lam):
+                    alpha = 1 / 2**p
+                    break
+                if p == pmax - 1:
+                    print(f"  Warnung: Kein Dämpfungsschritt gefunden nach {pmax} Versuchen")
+            print(f"  Dämpfung: alpha={alpha:.4f}")
+        else:
+            alpha = 1.0
+        
+        lam = lam + alpha * delta
+        iterations += 1
+        print(f"Iter {i+1}: lambda={lam}, |delta|={np.linalg.norm(delta, ord=norm):.2e}")
+        if np.linalg.norm(delta, ord=norm) < tol:
+            print("Konvergiert!")
+            break
+    return lam, iterations
+
+
+# Example usage:
+if __name__ == "__main__":
+    A0, f0, c0, f = sp.symbols('A0 f0 c0 f')
+    A_data = np.array([47, 114, 223, 81, 20])
+    f_data = np.array([25, 35, 45, 55, 65])
+
+    model = A0 / ((f**2 - f0**2)**2 + c0**2)
+    parameters = sp.Matrix([A0, f0, c0])
+    initial_guess1 = np.array([10**8, 50, 600])
+    initial_guess2 = np.array([10**7, 35, 350])
+    
+    best_fit, iterations = gauss_newton(model, parameters, f, f_data, A_data, initial_guess2, damping=True, norm=2)
+
+    print(f"Beste Fit-Parameter: {best_fit}, Iterationen: {iterations}")
+
+    f_fit = np.linspace(min(f_data), max(f_data), 5)
+    A_fit = best_fit[0] / ((f_fit**2 - best_fit[1]**2)**2 + best_fit[2]**2)
